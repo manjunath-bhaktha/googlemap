@@ -1,5 +1,5 @@
 QT += quick webenginequick
-TARGET = googlemaps
+TARGET = googlemap
 
 SOURCES += \
         main.cpp
