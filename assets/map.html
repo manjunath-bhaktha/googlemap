@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Automotive Route Finder</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background-color: #1a1a1a;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 22px;
+    }
+
+    #controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 10px;
+      background-color: #f1f1f1;
+      gap: 10px;
+    }
+
+    #controls input, #controls button {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      width: 250px;
+    }
+
+    #map {
+      flex-grow: 1;
+      width: 100%;
+    }
+
+    #directionsPanel {
+      max-height: 200px;
+      overflow-y: auto;
+      padding: 10px;
+      background-color: #fff;
+      border-top: 1px solid #ccc;
+    }
+
+    @media (max-width: 600px) {
+      #controls input, #controls button {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>🚘 Automotive Route Finder</header>
+
+  <div id="controls">
+    <input id="origin" type="text" placeholder="Enter origin" />
+    <input id="destination" type="text" placeholder="Enter destination" />
+    <button onclick="calculateRoute()">Show Route</button>
+    <button onclick="launchGoogleMapsNavigation()">Drive</button>
+  </div>
+
+  <div id="map"></div>
+  <div id="directionsPanel"></div>
+
+  <script>
+    let map, directionsService, directionsRenderer;
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 12.9716, lng: 77.5946 }, // Default: Bangalore
+        zoom: 13,
+      });
+
+      directionsService = new google.maps.DirectionsService();
+      directionsRenderer = new google.maps.DirectionsRenderer();
+      directionsRenderer.setMap(map);
+      directionsRenderer.setPanel(document.getElementById("directionsPanel"));
+
+      // Enable autocomplete
+      new google.maps.places.Autocomplete(document.getElementById("origin"));
+      new google.maps.places.Autocomplete(document.getElementById("destination"));
+    }
+
+    function calculateRoute() {
+      const origin = document.getElementById("origin").value;
+      const destination = document.getElementById("destination").value;
+
+      if (!origin || !destination) {
+        alert("Please enter both origin and destination.");
+        return;
+      }
+
+      directionsService.route(
+        {
+          origin: origin,
+          destination: destination,
+          travelMode: google.maps.TravelMode.DRIVING,
+        },
+        (response, status) => {
+          if (status === "OK") {
+            directionsRenderer.setDirections(response);
+          } else {
+            alert("Route calculation failed: " + status);
+          }
+        }
+      );
+    }
+
+    function launchGoogleMapsNavigation() {
+      const origin = document.getElementById("origin").value;
+      const destination = document.getElementById("destination").value;
+
+      if (!origin || !destination) {
+        alert("Please enter both origin and destination.");
+        return;
+      }
+
+      const url = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&travelmode=driving`;
+      window.open(url, "_blank");
+    }
+  </script>
+
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC89j5D7OB_ULB8gCkZeVVmuyFqTVDj6Y8&libraries=places&callback=initMap">
+  </script>
+</body>
+</html>
