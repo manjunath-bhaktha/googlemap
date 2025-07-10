@@ -4,8 +4,7 @@ import QtWebEngine 1.10
 
 Window {
     visible: true
-    width: 1280
-    height: 720
+    visibility: "FullScreen" 
     title: qsTr("Google Map Viewer")
 
     WebEngineView {
